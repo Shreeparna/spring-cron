@@ -1,0 +1,110 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:CronInput.properties</value>
+		</property>
+	</bean>
+
+
+
+
+
+	<bean id="Task1ID" class="com.shree.commons.Task1" />
+
+
+	<bean name="Job1" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="${jdbc.jobClass1}" />
+	</bean>
+	
+	<bean name="Job2" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="${jdbc.jobClass2}"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- <entry key="path" value="C:/Users/20706/command.cmd" /> -->
+				 <entry key="path" value="${jdbc.path}"/>  
+			</map>
+		</property>
+	</bean>
+
+<bean name="Job3" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="${jdbc.jobClass3}"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="taskClass" value-ref="Task1ID" />
+			</map>
+		</property>
+	</bean>
+
+
+
+
+
+	<bean id="cronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="Job1" />
+		<!-- <property name="cronExpression" value="0/5 * * * * ?" />-->
+		 <property name="cronExpression" value="${jdbc.cronExpression1}" /> 
+	</bean>
+
+	<bean id="cronTrigger2" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="Job2" />
+		<!-- <property name="cronExpression" value="0/5 * * * * ?" /> -->
+	    <property name="cronExpression" value="${jdbc.cronExpression2}" /> 
+	</bean>
+	
+	<bean id="cronTrigger3" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="Job3" />
+		<!-- <property name="cronExpression" value="0/5 * * * * ?" /> -->
+	    <property name="cronExpression" value="${jdbc.cronExpression3}" /> 
+	</bean>
+	
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="Job1" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger1" />
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="Job2" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger2" />
+			</list>
+		</property>
+	</bean>
+
+
+<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="Job3" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger3" />
+			</list>
+		</property>
+	</bean>
+
+
+</beans>
